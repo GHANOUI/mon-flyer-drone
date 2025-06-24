@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initiation au Pilotage de Drones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .drone-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .content {
+            padding: 30px 25px;
+        }
+        
+        .instructor-info {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .instructor-info::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 4s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .instructor-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.8);
+            margin-bottom: 15px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            animation: photoFloat 4s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+        
+        @keyframes photoFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-8px) scale(1.03); }
+        }
+        
+        .instructor-info h3 {
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .instructor-info p {
+            font-size: 0.95em;
+            opacity: 0.95;
+            line-height: 1.4;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .credentials {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .credential-item {
+            background: rgba(255,255,255,0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .credential-item:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+        
+        .course-list {
+            margin: 25px 0;
+        }
+        
+        .course-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+            transform: translateX(-10px);
+            opacity: 0;
+            animation: slideInLeft 0.6s ease-out forwards;
+        }
+        
+        .course-item:nth-child(1) { animation-delay: 0.2s; }
+        .course-item:nth-child(2) { animation-delay: 0.4s; }
+        .course-item:nth-child(3) { animation-delay: 0.6s; }
+        .course-item:nth-child(4) { animation-delay: 0.8s; }
+        
+        @keyframes slideInLeft {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .course-item:hover {
+            transform: translateX(5px);
+            transition: transform 0.3s ease;
+        }
+        
+        .course-icon {
+            font-size: 1.3em;
+            margin-right: 12px;
+            min-width: 30px;
+        }
+        
+        .course-text {
+            flex: 1;
+        }
+        
+        .course-title {
+            font-weight: 600;
+            font-size: 0.95em;
+            margin-bottom: 3px;
+        }
+        
+        .course-desc {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+        
+        .pricing {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing::before {
+            content: '🎯';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 3em;
+            opacity: 0.2;
+        }
+        
+        .pricing h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .price {
+            font-size: 1.8em;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+        
+        .offer {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 25px;
+            display: inline-block;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .contact-info {
+            background: #2c3e50;
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+        }
+        
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .contact-icon {
+            font-size: 1.1em;
+            margin-right: 12px;
+            min-width: 25px;
+            color: #3498db;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 18px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+        
+        .location {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .location h4 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .location p {
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                border-radius: 20px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.6em;
+            }
+            
+            .content {
+                padding: 25px 20px;
+            }
+            
+            .course-item {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="drone-icon">🚁</div>
+            <h1>INITIATION AU PILOTAGE DE DRONES</h1>
+        </div>
+        
+        <div class="content">
+            <div class="instructor-info">
+                <!-- REMPLACEZ L'URL CI-DESSOUS PAR VOTRE PHOTO -->
+                <img src="https://i.imgur.com/UhC4NL8.jpeg" alt="Expert en pilotage de drones en action" class="instructor-photo">
+                <h3>Expert Certifié</h3>
+                <p>Certificat d'Enseignement Supérieur<br>en Pilotage et Maintenance de Drones<br><strong>(obtenu avec distinction)</strong></p>
+                <div class="credentials">
+                    <div class="credential-item">
+                        <span>🏆</span>
+                        <span>Expert</span>
+                    </div>
+                    <div class="credential-item">
+                        <span>📜</span>
+                        <span>Certifié</span>
+                    </div>
+                    <div class="credential-item">
+                        <span>⭐</span>
+                        <span>Distinction</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="course-list">
+                <div class="course-item">
+                    <div class="course-icon">🎯</div>
+                    <div class="course-text">
+                        <div class="course-title">Initiation au pilotage</div>
+                        <div class="course-desc">Maîtrise les bases, sécurité et applications</div>
+                    </div>
+                </div>
+                
+                <div class="course-item">
+                    <div class="course-icon">✈️</div>
+                    <div class="course-text">
+                        <div class="course-title">Préparation du vol</div>
+                        <div class="course-desc">Préparation drone et planification sécurisée</div>
+                    </div>
+                </div>
+                
+                <div class="course-item">
+                    <div class="course-icon">⚖️</div>
+                    <div class="course-text">
+                        <div class="course-title">Législation BE/EU</div>
+                        <div class="course-desc">Cadre légal pour pilotage conforme</div>
+                    </div>
+                </div>
+                
+                <div class="course-item">
+                    <div class="course-icon">📸</div>
+                    <div class="course-text">
+                        <div class="course-title">Photo & Vidéo</div>
+                        <div class="course-desc">Capture d'images aériennes exceptionnelles</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pricing">
+                <h3>Tarifs</h3>
+                <div class="price">50€/heure</div>
+                <div class="offer">🎁 Première heure OFFERTE</div>
+            </div>
+            
+            <div class="location">
+                <h4>📍 Modalités</h4>
+                <p>Face à face chez vous ou chez moi, ou par visioconférence.<br>
+                <strong>Partie pratique sur le terrain uniquement.</strong></p>
+            </div>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📱</div>
+                    <div>0475916090</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div>aghanoui@gmail.com</div>
+                </div>
+            </div>
+            
+            <button class="cta-button">
+                Réserve ton cours maintenant !
+            </button>
+        </div>
+    </div>
+</body>
+</html>
